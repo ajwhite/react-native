@@ -24,6 +24,13 @@ class HasteMap {
   build() {
     this._map = Object.create(null);
 
+    var x = this._fastfs.findFilesByExt('js', {
+      ignore: (file) =>  false //file.indexOf('react-tools') === -1 // TEMPORARILY DISABLE ALL IGNORES
+    });
+    console.log('Total files discovered', x.length);
+
+    throw new Error('YOU SHALL NOT PASS');
+
     let promises = this._fastfs.findFilesByExt('js', {
       ignore: (file) => this._helpers.isNodeModulesDir(file)
     }).map(file => this._processHasteModule(file));
@@ -70,6 +77,9 @@ class HasteMap {
 
   getModule(name, platform = null) {
     const modulesMap = this._map[name];
+    // if (name === 'ReactReconciler') {
+    //   console.log('ModulesMap', modulesMap);
+    // }
     if (modulesMap == null) {
       return null;
     }

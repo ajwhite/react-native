@@ -213,6 +213,12 @@ class Fastfs extends EventEmitter {
 class File {
   constructor(filePath, { isDir }) {
     this.path = filePath;
+    // if (this.path.indexOf('react-tools') > -1) {
+    //   if (isDir) {
+    //     console.log('File', this.path);
+    //   }
+    //   // console.log('File', this.path, isDir);
+    // }
     this.isDir = Boolean(isDir);
     if (this.isDir) {
       this.children = Object.create(null);
@@ -280,7 +286,13 @@ class File {
   getFiles() {
     return _.flatten(_.values(this.children).map(file => {
       if (file.isDir) {
-        return file.getFiles();
+        var files = file.getFiles();
+        if (file.path === '/Users/ajwhite/Development/Labs/react-native/node_modules/react-tools') {
+          // console.log('FIle', file.path);
+          // console.log('child files', files)
+        }
+        return files;
+
       } else {
         return file;
       }

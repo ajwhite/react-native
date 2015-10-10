@@ -53,6 +53,9 @@ function watchmanRecReadDir(roots, {ignore, fileWatcher, exts}) {
               );
 
               if (!ignore(filePath)) {
+                if (filePath.indexOf('react-tools') > -1) {
+                  console.log('react-tools file:', filePath);
+                }
                 files.push(filePath);
               }
               return false;

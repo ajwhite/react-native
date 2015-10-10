@@ -164,16 +164,24 @@ class ResolutionRequest {
 
   _resolveHasteDependency(fromModule, toModuleName) {
     toModuleName = normalizePath(toModuleName);
+    // console.log ('toModuleName', toModuleName, normalizePath(toModuleName));
 
     let p = fromModule.getPackage();
     if (p) {
+      // console.log('has package, redirectingRequire');
       p = p.redirectRequire(toModuleName);
     } else {
+      // console.log('no package, resolving toModuleName');
       p = Promise.resolve(toModuleName);
     }
 
     return p.then((realModuleName) => {
+      // console.log('real module name', realModuleName);
       let dep = this._hasteMap.getModule(realModuleName, this._platform);
+      // if (realModuleName === 'ReactReconciler') {
+      //   console.log('dep', dep ? dep.type : null);
+      // }
+
       if (dep && dep.type === 'Module') {
         return dep;
       }

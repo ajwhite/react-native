@@ -18,7 +18,6 @@ function crawl(roots, options) {
     if (isWatchman) {
       return watchmanCrawl(roots, options);
     }
-
     return nodeCrawl(roots, options);
   });
 }

@@ -20,9 +20,14 @@ class Helpers {
     let parts = path.normalize(file).split(path.sep);
     const indexOfNodeModules = parts.lastIndexOf('node_modules');
 
-    if (indexOfNodeModules === -1) {
-      return false;
-    }
+    // var isReactTools = parts.indexOf('react-tools') > -1;
+    //
+    // if (indexOfNodeModules === -1) {
+    //   if (isReactTools) {
+    //     console.log('Not ignoring', file);
+    //   }
+    //   return false;
+    // }
 
     parts = parts.slice(indexOfNodeModules + 1);
 
@@ -30,10 +35,16 @@ class Helpers {
 
     for (let i = 0; i < dirs.length; i++) {
       if (parts.indexOf(dirs[i]) > -1) {
+        // if (isReactTools) {
+        //   console.log('Not ignoring', file);
+        // }
         return false;
       }
     }
 
+    // if (isReactTools) {
+    //   console.log('ignoring', file);
+    // }
     return true;
   }
 
