@@ -68,6 +68,7 @@ public class ReactEditText extends EditText {
   private int mStagedInputType;
   private boolean mContainsImages;
   private @Nullable SelectionWatcher mSelectionWatcher;
+  private @Nullable KeyWatcher mKeyWatcher;
   private final InternalKeyListener mKeyListener;
 
   private static final KeyListener sKeyListener = QwertyKeyListener.getInstanceForFullKeyboard();
@@ -111,6 +112,15 @@ public class ReactEditText extends EditText {
       return true;
     }
     return super.onKeyUp(keyCode, event);
+  }
+
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    System.out.println("ON KEY DOWN " + event.toString());
+    if (mKeyWatcher != null && hasFocus()) {
+      mKeyWatcher.onKeyPressed(keyCode, event);
+    }
+    return super.onKeyDown(keyCode, event);
   }
 
   @Override
@@ -168,7 +178,7 @@ public class ReactEditText extends EditText {
 
   @Override
   protected void onFocusChanged(
-      boolean focused, int direction, Rect previouslyFocusedRect) {
+          boolean focused, int direction, Rect previouslyFocusedRect) {
     super.onFocusChanged(focused, direction, previouslyFocusedRect);
     if (focused && mSelectionWatcher != null) {
       mSelectionWatcher.onSelectionChanged(getSelectionStart(), getSelectionEnd());
@@ -177,6 +187,10 @@ public class ReactEditText extends EditText {
 
   public void setSelectionWatcher(SelectionWatcher selectionWatcher) {
     mSelectionWatcher = selectionWatcher;
+  }
+
+  public void setKeyWatcher(KeyWatcher keyWatcher) {
+    mKeyWatcher = keyWatcher;
   }
 
   /*protected*/ int getStagedInputType() {

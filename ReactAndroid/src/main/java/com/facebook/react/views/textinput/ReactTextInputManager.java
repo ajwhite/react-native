@@ -97,11 +97,11 @@ public class ReactTextInputManager extends BaseViewManager<ReactEditText, Layout
   public Map<String, Object> getExportedCustomBubblingEventTypeConstants() {
     return MapBuilder.<String, Object>builder()
         .put(
-            "topSubmitEditing",
-            MapBuilder.of(
-                "phasedRegistrationNames",
+                "topSubmitEditing",
                 MapBuilder.of(
-                    "bubbled", "onSubmitEditing", "captured", "onSubmitEditingCapture")))
+                        "phasedRegistrationNames",
+                        MapBuilder.of(
+                                "bubbled", "onSubmitEditing", "captured", "onSubmitEditingCapture")))
         .put(
             "topEndEditing",
             MapBuilder.of(
@@ -122,6 +122,13 @@ public class ReactTextInputManager extends BaseViewManager<ReactEditText, Layout
             MapBuilder.of(
                 "phasedRegistrationNames",
                 MapBuilder.of("bubbled", "onBlur", "captured", "onBlurCapture")))
+        .put(
+                "topKey",
+                MapBuilder.of(
+                        "phasedRegistrationNames",
+                        MapBuilder.of("bubbled", "onKeyPress", "captured", "onKeyPressCapture")
+                )
+        )
         .build();
   }
 
@@ -180,6 +187,16 @@ public class ReactTextInputManager extends BaseViewManager<ReactEditText, Layout
       view.setSelectionWatcher(null);
     }
   }
+
+//  @ReactProp(name = "onKeyPress", defaultBoolean = false)
+//  public void onKeyPress(final ReactEditText view, boolean onKeyPress) {
+//    if (onKeyPress) {
+//      System.out.println("ON KEY PRESS PROPERTY ATTACHED");
+//      view.setKeyWatcher(new ReactKeyWatcher(view));
+//    } else {
+//      view.setKeyWatcher(null);
+//    }
+//  }
 
   @ReactProp(name = "placeholder")
   public void setPlaceholder(ReactEditText view, @Nullable String placeholder) {
@@ -452,6 +469,7 @@ public class ReactTextInputManager extends BaseViewManager<ReactEditText, Layout
   protected void addEventEmitters(
       final ThemedReactContext reactContext,
       final ReactEditText editText) {
+    editText.setKeyWatcher(new ReactKeyWatcher(editText));
     editText.addTextChangedListener(new ReactTextInputTextWatcher(reactContext, editText));
     editText.setOnFocusChangeListener(
         new View.OnFocusChangeListener() {
@@ -529,6 +547,29 @@ public class ReactTextInputManager extends BaseViewManager<ReactEditText, Layout
         mPreviousSelectionStart = start;
         mPreviousSelectionEnd = end;
       }
+    }
+  }
+
+  private class ReactKeyWatcher implements KeyWatcher {
+    private ReactEditText mReactEditText;
+    private EventDispatcher mEventDispatcher;
+
+    public ReactKeyWatcher(ReactEditText editText) {
+      mReactEditText = editText;
+      ReactContext reactContext = (ReactContext) editText.getContext();
+      mEventDispatcher = reactContext.getNativeModule(UIManagerModule.class).getEventDispatcher();
+    }
+
+    @Override
+    public void onKeyPressed(int keyCode, KeyEvent keyEvent) {
+      System.out.println("THIS IS PRESSING DAS KEY " + keyEvent.toString());
+      mEventDispatcher.dispatchEvent(
+              new ReactTextInputKeyPressEvent(
+                      mReactEditText.getId(),
+                      SystemClock.uptimeMillis(),
+                      keyEvent.toString()
+              )
+      );
     }
   }
 

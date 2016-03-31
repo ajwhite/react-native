@@ -51,6 +51,9 @@ var TextEventsExample = React.createClass({
           autoCorrect={false}
           onFocus={() => this.updateText('onFocus')}
           onBlur={() => this.updateText('onBlur')}
+          onKeyPress={(event) => {
+            console.log('EVENT', event);
+          }}
           onChange={(event) => this.updateText(
             'onChange text: ' + event.nativeEvent.text
           )}
